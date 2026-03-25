@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Araçları Karşılaştırması 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c10;
+    --surface: #0e1318;
+    --border: #1c2530;
+    --text: #e8edf2;
+    --muted: #5a6a7a;
+    --cowork: #00e5c8;
+    --code: #5b8fff;
+    --codex: #ff6b35;
+    --openclaw: #c77dff;
+    --glow-cowork: rgba(0,229,200,0.15);
+    --glow-code: rgba(91,143,255,0.15);
+    --glow-codex: rgba(255,107,53,0.15);
+    --glow-openclaw: rgba(199,125,255,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--cowork);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, background 0.3s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(0,229,200,0.4);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.2s ease;
+    mix-blend-mode: screen;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.5;
+  }
+
+  /* Grid background */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 0 60px;
+    position: relative;
+  }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 2px;
+    margin-bottom: 40px;
+    display: inline-block;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(52px, 8vw, 110px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    animation: fadeUp 0.8s ease 0.1s both;
+  }
+
+  .hero h1 .line1 { display: block; color: var(--text); }
+  .hero h1 .line2 {
+    display: block;
+    -webkit-text-stroke: 1px var(--muted);
+    color: transparent;
+    opacity: 0.5;
+  }
+
+  .hero-desc {
+    font-family: 'Crimson Pro', serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 500px;
+    line-height: 1.6;
+    margin-bottom: 60px;
+    animation: fadeUp 0.8s ease 0.2s both;
+  }
+
+  .hero-pills {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.8s ease 0.3s both;
+  }
+
+  .pill {
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    text-transform: uppercase;
+    border: 1px solid;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .pill-cowork { color: var(--cowork); border-color: var(--cowork); }
+  .pill-code { color: var(--code); border-color: var(--code); }
+  .pill-codex { color: var(--codex); border-color: var(--codex); }
+  .pill-openclaw { color: var(--openclaw); border-color: var(--openclaw); }
+  .pill:hover { transform: translateY(-2px); }
+
+  /* Scrolling marquee */
+  .marquee-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+    background: rgba(14,19,24,0.8);
+    backdrop-filter: blur(10px);
+  }
+  .marquee {
+    display: flex;
+    gap: 60px;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee span {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .marquee span.accent { color: var(--cowork); }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ===== TOOLS SECTION ===== */
+  .section {
+    padding: 120px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 80px;
+  }
+
+  /* Card grid */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+
+  .tool-card {
+    background: var(--surface);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .tool-card.cowork::before { background: radial-gradient(ellipse at top left, var(--glow-cowork), transparent 60%); }
+  .tool-card.code::before { background: radial-gradient(ellipse at top right, var(--glow-code), transparent 60%); }
+  .tool-card.codex::before { background: radial-gradient(ellipse at bottom left, var(--glow-codex), transparent 60%); }
+  .tool-card.openclaw::before { background: radial-gradient(ellipse at bottom right, var(--glow-openclaw), transparent 60%); }
+
+  .tool-card:hover::before { opacity: 1; }
+  .tool-card:hover { transform: scale(1.01); z-index: 10; }
+
+  .card-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .card-icon {
+    font-size: 40px;
+    margin-bottom: 20px;
+    display: block;
+    filter: grayscale(0);
+  }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .card-maker {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .card-desc {
+    font-family: 'Crimson Pro', serif;
+    font-size: 17px;
+    font-weight: 300;
+    color: #8a9aaa;
+    line-height: 1.65;
+    margin-bottom: 32px;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .tag {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  .card-line {
+    height: 2px;
+    border-radius: 2px;
+    margin-bottom: 24px;
+    transition: width 0.6s ease;
+  }
+
+  .card-for {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .card-audience {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  /* Accent colors */
+  .cowork .card-title { color: var(--cowork); }
+  .code .card-title { color: var(--code); }
+  .codex .card-title { color: var(--codex); }
+  .openclaw .card-title { color: var(--openclaw); }
+
+  .cowork .card-line { background: var(--cowork); }
+  .code .card-line { background: var(--code); }
+  .codex .card-line { background: var(--codex); }
+  .openclaw .card-line { background: var(--openclaw); }
+
+  .cowork .tag { background: rgba(0,229,200,0.1); color: var(--cowork); }
+  .code .tag { background: rgba(91,143,255,0.1); color: var(--code); }
+  .codex .tag { background: rgba(255,107,53,0.1); color: var(--codex); }
+  .openclaw .tag { background: rgba(199,125,255,0.1); color: var(--openclaw); }
+
+  .cowork .card-audience { color: var(--cowork); }
+  .code .card-audience { color: var(--code); }
+  .codex .card-audience { color: var(--codex); }
+  .openclaw .card-audience { color: var(--openclaw); }
+
+  /* Corner decoration */
+  .card-corner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+  }
+  .tool-card:hover .card-corner { opacity: 1; }
+  .cowork .card-corner { border-top: 60px solid var(--cowork); border-left: 60px solid transparent; }
+  .code .card-corner { border-top: 60px solid var(--code); border-left: 60px solid transparent; }
+  .codex .card-corner { border-top: 60px solid var(--codex); border-left: 60px solid transparent; }
+  .openclaw .card-corner { border-top: 60px solid var(--openclaw); border-left: 60px solid transparent; }
+
+  /* ===== COMPARISON TABLE ===== */
+  .compare-section {
+    padding: 120px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .compare-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead tr {
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    padding: 20px 24px;
+    text-align: left;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  th:first-child { color: var(--muted); font-weight: 400; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.2em; }
+  th.cowork-h { color: var(--cowork); }
+  th.code-h { color: var(--code); }
+  th.codex-h { color: var(--codex); }
+  th.openclaw-h { color: var(--openclaw); }
+
+  td {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    color: #8a9aaa;
+    font-size: 12px;
+    line-height: 1.5;
+    vertical-align: top;
+  }
+
+  td:first-child {
+    color: var(--text);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .check { color: #00e5c8; }
+  .cross { color: #ff4444; }
+  .partial { color: #ffaa00; }
+
+  /* ===== USE CASES ===== */
+  .usecase-section {
+    padding: 120px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .usecase-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  .usecase-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 60px;
+  }
+
+  .usecase-item {
+    background: var(--surface);
+    padding: 32px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+
+  .usecase-item:hover { transform: translateY(-4px); }
+
+  .usecase-task {
+    font-family: 'Crimson Pro', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--text);
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .usecase-arrow {
+    font-size: 20px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .usecase-tool {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .usecase-why {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.5;
+    letter-spacing: 0.05em;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer .left {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  footer .right {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-align: right;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Floating orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.08;
+  }
+  .orb1 { width: 600px; height: 600px; background: var(--cowork); top: -200px; right: -200px; animation: float1 15s ease-in-out infinite; }
+  .orb2 { width: 400px; height: 400px; background: var(--openclaw); bottom: 10%; left: -100px; animation: float2 18s ease-in-out infinite; }
+
+  @keyframes float1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-40px, 40px); }
+  }
+  @keyframes float2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, -30px); }
+  }
+
+  @media (max-width: 768px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .usecase-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    footer .right { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">HW3 — AI Araçları Karşılaştırması 2026</div>
+    <h1>
+      <span class="line1">Hangi</span>
+      <span class="line2">AI Aracı?</span>
+    </h1>
+    <p class="hero-desc">
+      Claude Cowork, Claude Code, OpenAI Codex ve OpenClaw arasındaki farklar — hangi görev için hangisini kullanmalısınız?
+    </p>
+    <div class="hero-pills">
+      <span class="pill pill-cowork">Claude Cowork</span>
+      <span class="pill pill-code">Claude Code</span>
+      <span class="pill pill-codex">OpenAI Codex</span>
+      <span class="pill pill-openclaw">OpenClaw</span>
+    </div>
+  </div>
+  <div class="marquee-wrap">
+    <div class="marquee">
+      <span class="accent">Claude Cowork</span>
+      <span>— Ofis Otomasyonu —</span>
+      <span class="accent">Claude Code</span>
+      <span>— Terminal CLI —</span>
+      <span class="accent">OpenAI Codex</span>
+      <span>— Bulut Tabanlı Geliştirme —</span>
+      <span class="accent">OpenClaw</span>
+      <span>— Açık Kaynak Ajan —</span>
+      <span class="accent">Claude Cowork</span>
+      <span>— Ofis Otomasyonu —</span>
+      <span class="accent">Claude Code</span>
+      <span>— Terminal CLI —</span>
+      <span class="accent">OpenAI Codex</span>
+      <span>— Bulut Tabanlı Geliştirme —</span>
+      <span class="accent">OpenClaw</span>
+      <span>— Açık Kaynak Ajan —</span>
+    </div>
+  </div>
+</section>
+
+<!-- TOOL CARDS -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">// araçlar</p>
+    <h2 class="section-title">Dört Farklı Araç,<br>Dört Farklı Misyon</h2>
+
+    <div class="cards-grid">
+
+      <!-- Claude Cowork -->
+      <div class="tool-card cowork fade-in">
+        <div class="card-corner"></div>
+        <div class="card-number">01 / 04</div>
+        <span class="card-icon">🤝</span>
+        <h3 class="card-title">Claude Cowork</h3>
+        <p class="card-maker">by Anthropic</p>
+        <div class="card-line"></div>
+        <p class="card-desc">
+          Kod bilmeden güçlü bir AI ajanı kullanmak isteyenler için tasarlandı. Masaüstünüzde dosya sisteminize erişir, güvenli sandbox içinde XLSX, DOCX, PPTX dosyalarıyla doğrudan çalışır. Başlattığınızda çalışır — arka planda değil.
+        </p>
+        <div class="card-tags">
+          <span class="tag">Masaüstü Ajanı</span>
+          <span class="tag">No-Code</span>
+          <span class="tag">Dosya Sistemi</span>
+          <span class="tag">Pro/Max</span>
+        </div>
+        <p class="card-for">En iyi kullanım</p>
+        <p class="card-audience">Ofis dosyaları · Workflow otomasyonu · Proje yönetimi</p>
+      </div>
+
+      <!-- Claude Code -->
+      <div class="tool-card code fade-in">
+        <div class="card-corner"></div>
+        <div class="card-number">02 / 04</div>
+        <span class="card-icon">⚡</span>
+        <h3 class="card-title">Claude Code</h3>
+        <p class="card-maker">by Anthropic</p>
+        <div class="card-line"></div>
+        <p class="card-desc">
+          Terminal tabanlı güçlü bir CLI aracı. Tüm bilgisayarınıza tam erişimle çalışır ve projenizin bütününü kavrayarak birden fazla dosyada koordineli değişiklikler yapabilir. Microsoft ve NVIDIA gibi şirketler kullanıyor.
+        </p>
+        <div class="card-tags">
+          <span class="tag">CLI / Terminal</span>
+          <span class="tag">Full Codebase</span>
+          <span class="tag">GitHub Entegrasyon</span>
+          <span class="tag">Kapalı Ekosistem</span>
+        </div>
+        <p class="card-for">En iyi kullanım</p>
+        <p class="card-audience">Büyük refactoring · Test yazımı · Kod review</p>
+      </div>
+
+      <!-- OpenAI Codex -->
+      <div class="tool-card codex fade-in">
+        <div class="card-corner"></div>
+        <div class="card-number">03 / 04</div>
+        <span class="card-icon">🔮</span>
+        <h3 class="card-title">OpenAI Codex</h3>
+        <p class="card-maker">by OpenAI</p>
+        <div class="card-line"></div>
+        <p class="card-desc">
+          GPT-5 tabanlı, bulut sandboxlarında asenkron çalışan bir mühendislik ajanı. Metodolojik ve dikkatli yaklaşımıyla karmaşık hataları güvenilir biçimde tespit eder. Multimodal: metin, kod ve görüntü girdilerini destekler.
+        </p>
+        <div class="card-tags">
+          <span class="tag">Bulut Tabanlı</span>
+          <span class="tag">Asenkron</span>
+          <span class="tag">Multimodal</span>
+          <span class="tag">GPT-5</span>
+        </div>
+        <p class="card-for">En iyi kullanım</p>
+        <p class="card-audience">Derin hata analizi · Kod kalitesi · Planlama</p>
+      </div>
+
+      <!-- OpenClaw -->
+      <div class="tool-card openclaw fade-in">
+        <div class="card-corner"></div>
+        <div class="card-number">04 / 04</div>
+        <span class="card-icon">🦅</span>
+        <h3 class="card-title">OpenClaw</h3>
+        <p class="card-maker">by Peter Steinberger (OSS)</p>
+        <div class="card-line"></div>
+        <p class="card-desc">
+          Eski adıyla Clawdbot/Moltbot. Model bağımsız, açık kaynaklı "always-on" kişisel ajan. Claude, GPT, Gemini veya yerel modellerle çalışır. Haftalarca bağlamı hatırlayan kalıcı belleğe sahip — ama güvenlik riskleri var.
+        </p>
+        <div class="card-tags">
+          <span class="tag">Açık Kaynak</span>
+          <span class="tag">Model Agnostik</span>
+          <span class="tag">Kalıcı Bellek</span>
+          <span class="tag">Always-On</span>
+        </div>
+        <p class="card-for">En iyi kullanım</p>
+        <p class="card-audience">Günlük otomasyon · E-posta/takvim · Ücretsiz çözüm</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="compare-section">
+  <div class="container">
+    <p class="section-label">// karşılaştırma</p>
+    <h2 class="section-title fade-in">Özellik<br>Matrisi</h2>
+
+    <div class="table-wrap fade-in">
+      <table>
+        <thead>
+          <tr>
+            <th>ÖZELLİK</th>
+            <th class="cowork-h">Cowork</th>
+            <th class="code-h">Claude Code</th>
+            <th class="codex-h">Codex</th>
+            <th class="openclaw-h">OpenClaw</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Hedef Kullanıcı</td>
+            <td>Ofis çalışanları, yöneticiler</td>
+            <td>Yazılım geliştiriciler</td>
+            <td>Senior mühendisler</td>
+            <td>Herkes (teknik+)</td>
+          </tr>
+          <tr>
+            <td>Arayüz</td>
+            <td>Masaüstü GUI</td>
+            <td>Terminal / CLI</td>
+            <td>Bulut + CLI + Web</td>
+            <td>Lokal GUI / Terminal</td>
+          </tr>
+          <tr>
+            <td>Ücretsiz mi?</td>
+            <td><span class="partial">⚡ Pro/Max plan</span></td>
+            <td><span class="partial">⚡ Pro plan (~$20)</span></td>
+            <td><span class="partial">⚡ OpenAI abonelik</span></td>
+            <td><span class="check">✓ Açık kaynak ücretsiz</span></td>
+          </tr>
+          <tr>
+            <td>Model Esnekliği</td>
+            <td><span class="cross">✗ Sadece Claude</span></td>
+            <td><span class="cross">✗ Sadece Claude</span></td>
+            <td><span class="cross">✗ Sadece GPT</span></td>
+            <td><span class="check">✓ Tüm modeller</span></td>
+          </tr>
+          <tr>
+            <td>Kalıcı Bellek</td>
+            <td><span class="cross">✗ Hayır</span></td>
+            <td><span class="cross">✗ Session bazlı</span></td>
+            <td><span class="cross">✗ Session bazlı</span></td>
+            <td><span class="check">✓ Haftalarca hatırlar</span></td>
+          </tr>
+          <tr>
+            <td>Kod Üretme Kalitesi</td>
+            <td><span class="partial">⚡ Orta</span></td>
+            <td><span class="check">✓ Çok yüksek</span></td>
+            <td><span class="check">✓ Çok yüksek</span></td>
+            <td><span class="partial">⚡ Model bağımlı</span></td>
+          </tr>
+          <tr>
+            <td>Hız</td>
+            <td><span class="check">✓ Hızlı</span></td>
+            <td><span class="check">✓ Hızlı</span></td>
+            <td><span class="cross">✗ Yavaş (metodolojik)</span></td>
+            <td><span class="check">✓ Model bağımlı</span></td>
+          </tr>
+          <tr>
+            <td>Dosya Sistemi Erişimi</td>
+            <td><span class="check">✓ Sandbox ile</span></td>
+            <td><span class="check">✓ Tam erişim</span></td>
+            <td><span class="partial">⚡ Bulut sandbox</span></td>
+            <td><span class="check">✓ Root erişim</span></td>
+          </tr>
+          <tr>
+            <td>Güvenlik</td>
+            <td><span class="check">✓ Yüksek (Apple sandbox)</span></td>
+            <td><span class="check">✓ Yüksek</span></td>
+            <td><span class="check">✓ İzole bulut</span></td>
+            <td><span class="cross">✗ Risk var (skills)</span></td>
+          </tr>
+          <tr>
+            <td>Ofis Dosyaları (XLSX vb)</td>
+            <td><span class="check">✓ Native destek</span></td>
+            <td><span class="partial">⚡ Kısmi</span></td>
+            <td><span class="cross">✗ Hayır</span></td>
+            <td><span class="partial">⚡ Skill ile</span></td>
+          </tr>
+          <tr>
+            <td>Multimodal (Görüntü)</td>
+            <td><span class="partial">⚡ Kısmi</span></td>
+            <td><span class="partial">⚡ Kısmi</span></td>
+            <td><span class="check">✓ Tam destek</span></td>
+            <span class="partial">⚡ Model bağımlı</span>
+          </tr>
+          <tr>
+            <td>Topluluk Ekosistemi</td>
+            <td><span class="cross">✗ Sınırlı</span></td>
+            <td><span class="partial">⚡ Büyüyor</span></td>
+            <td><span class="partial">⚡ Büyüyor</span></td>
+            <td><span class="check">✓ Geniş (59k+ GitHub)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="usecase-section">
+  <div class="container">
+    <p class="section-label">// kullanım senaryoları</p>
+    <h2 class="section-title fade-in">Hangi Görev,<br>Hangi Araç?</h2>
+
+    <div class="usecase-grid">
+
+      <div class="usecase-item fade-in">
+        <p class="usecase-task">"Downloads klasörümü organize edip PDF'lerden Excel'e veri çıkarmam gerekiyor"</p>
+        <span class="usecase-arrow">→</span>
+        <p class="usecase-tool" style="color: var(--cowork)">Claude Cowork</p>
+        <p class="usecase-why">Ofis dosyaları ve workflow otomasyonu için native destek</p>
+      </div>
+
+      <div class="usecase-item fade-in">
+        <p class="usecase-task">"100k satırlık kod tabanında büyük bir refactoring yapacağım"</p>
+        <span class="usecase-arrow">→</span>
+        <p class="usecase-tool" style="color: var(--code)">Claude Code</p>
+        <p class="usecase-why">Tam codebase bağlamı, çok dosyalı koordinasyon</p>
+      </div>
+
+      <div class="usecase-item fade-in">
+        <p class="usecase-task">"Karmaşık bir bug var, ekip bulamadı, derin analiz lazım"</p>
+        <span class="usecase-arrow">→</span>
+        <p class="usecase-tool" style="color: var(--codex)">OpenAI Codex</p>
+        <p class="usecase-why">Metodolojik analiz, güvenilir hata tespiti</p>
+      </div>
+
+      <div class="usecase-item fade-in">
+        <p class="usecase-task">"Her sabah e-postalarımı özetleyip takvimimi yönetsin istiyorum"</p>
+        <span class="usecase-arrow">→</span>
+        <p class="usecase-tool" style="color: var(--openclaw)">OpenClaw</p>
+        <p class="usecase-why">Always-on ajan, platform entegrasyonları</p>
+      </div>
+
+      <div class="usecase-item fade-in">
+        <p class="usecase-task">"Bütçem kısıtlı, ücretsiz ve esnek bir AI ajan istiyorum"</p>
+        <span class="usecase-arrow">→</span>
+        <p class="usecase-tool" style="color: var(--openclaw)">OpenClaw</p>
+        <p class="usecase-why">Açık kaynak, yerel model desteği, sıfır abonelik</p>
+      </div>
+
+      <div class="usecase-item fade-in">
+        <p class="usecase-task">"Kurumsal ortamda güvenli, izole bir ortamda kod geliştiriyorum"</p>
+        <span class="usecase-arrow">→</span>
+        <p class="usecase-tool" style="color: var(--code)">Claude Code</p>
+        <p class="usecase-why">Güvenli, Anthropic'in enterprise güvencesiyle</p>
+      </div>
+
+      <div class="usecase-item fade-in">
+        <p class="usecase-task">"Mimari diyagram görseli yükleyip kodunu otomatik yazmak istiyorum"</p>
+        <span class="usecase-arrow">→</span>
+        <p class="usecase-tool" style="color: var(--codex)">OpenAI Codex</p>
+        <p class="usecase-why">Görüntü + kod girdisi destekler (multimodal)</p>
+      </div>
+
+      <div class="usecase-item fade-in">
+        <p class="usecase-task">"Sunum, rapor ve Word belgesi hazırlıyorum, terminal yok"</p>
+        <span class="usecase-arrow">→</span>
+        <p class="usecase-tool" style="color: var(--cowork)">Claude Cowork</p>
+        <p class="usecase-why">GUI üzerinden PPTX, DOCX native işleme</p>
+      </div>
+
+      <div class="usecase-item fade-in">
+        <p class="usecase-task">"Hem Claude hem GPT'yi aynı projede kullanmak istiyorum"</p>
+        <span class="usecase-arrow">→</span>
+        <p class="usecase-tool" style="color: var(--openclaw)">OpenClaw</p>
+        <p class="usecase-why">Model agnostik yapısı, farklı sağlayıcıları destekler</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center;width:100%">
+    <div class="left">AI Araçları <span style="color:var(--muted); font-weight:400">2026</span></div>
+    <div class="right">
+      HW3 — Karşılaştırma Raporu<br>
+      <span style="color: var(--cowork)">Cowork</span> · <span style="color: var(--code)">Claude Code</span> · <span style="color: var(--codex)">Codex</span> · <span style="color: var(--openclaw)">OpenClaw</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx - 6 + 'px';
+    cursor.style.top = my - 6 + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx - 18 + 'px';
+    ring.style.top = ry - 18 + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Scroll fade-in
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Pill scroll
+  document.querySelectorAll('.pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelector('.cards-grid').scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
